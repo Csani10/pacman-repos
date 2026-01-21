@@ -1,0 +1,24 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=amethystos-wallpapers
+pkgver=1.0
+pkgrel=1
+pkgdesc="Wallpapers for AmethystOS"
+arch=("any")
+license=('unknown')
+source=("wall0.png"
+        "wall1.png"
+		"wall2.png")
+sha256sums=("SKIP" "SKIP" "SKIP")
+
+package() {
+	install -d "$pkgdir/usr/share/wallpapers/amethystos"
+
+	install -m 644 wall0.png "$pkgdir/usr/share/wallpapers/amethystos/"
+	install -m 644 wall1.png "$pkgdir/usr/share/wallpapers/amethystos/"
+	install -m 644 wall2.png "$pkgdir/usr/share/wallpapers/amethystos/"
+}

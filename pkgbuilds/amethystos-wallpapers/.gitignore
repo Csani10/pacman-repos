@@ -1,0 +1,4 @@
+mpvpaper/
+pkg/
+src/
+*.pkg.tar.zst
