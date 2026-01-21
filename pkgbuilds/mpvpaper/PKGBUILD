@@ -1,0 +1,33 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=mpvpaper-git
+pkgver=1.8.2.g01b2b92
+pkgrel=1
+pkgdesc="mpvpaper is a wallpaper program for wlroots based wayland compositors, such as sway. That allows you to play videos with mpv as your wallpaper."
+arch=("x86_64")
+url="https://github.com/GhostNaN/mpvpaper"
+license=('GPLv3')
+depends=("mpv" "wlroots0.19")
+makedepends=("ninja" "meson" "wayland-protocols")
+source=("git+https://github.com/GhostNaN/mpvpaper.git")
+sha256sums=("SKIP")
+
+pkgver() {
+	cd mpvpaper
+	git describe --long --tags --dirty --always 2>/dev/null | sed 's/^v//;s/-/./g'
+}
+
+build() {
+	cd mpvpaper
+	meson setup build --prefix=/usr
+	ninja -C build
+}
+
+package() {
+	cd mpvpaper
+	DESTDIR="$pkgdir" ninja -C build install
+}
