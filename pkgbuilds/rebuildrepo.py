@@ -27,6 +27,8 @@ def main():
     packages = repo_cfg[repo_name]
     not_found_packages = []
 
+    pwd = os.environ["PWD"]
+
     for package in packages:
         if not os.path.exists(f"{package}/"):
             print(f"Cant add '{package}', not found")
@@ -36,12 +38,12 @@ def main():
         packages.remove(package)
 
 
-    if os.path.exists(os.environ["PWD"] + f"/../{repo_name}/"):
-        shutil.rmtree(os.environ["PWD"] + f"/../{repo_name}/")    
+    if os.path.exists(f"{pwd}/../{repo_name}/"):
+        shutil.rmtree(f"{pwd}/../{repo_name}/")    
 
     for package in packages:
-        src_dir = Path(os.environ["PWD"] + f"/{package}/")
-        dst_dir = Path(os.environ["PWD"] + f"/../{repo_name}/x86_64")
+        src_dir = Path(f"{pwd}/{package}/")
+        dst_dir = Path(f"{pwd}/../{repo_name}/x86_64")
 
         dst_dir.mkdir(parents=True, exist_ok=True)
 
@@ -51,6 +53,11 @@ def main():
     for file in dst_dir.glob("*.pkg.tar.zst"):
         subprocess.run(["repo-add", f"{repo_name}.db.tar.gz", f"{file}"], cwd=dst_dir)
 
+    os.unlink(f"{pwd}/../{repo_name}/x86_64/{repo_name}.db")
+    os.unlink(f"{pwd}/../{repo_name}/x86_64/{repo_name}.files")
+    os.rename(f"{pwd}/../{repo_name}/x86_64/{repo_name}.db.tar.gz", f"{pwd}/../{repo_name}/x86_64/{repo_name}.db")
+    os.rename(f"{pwd}/../{repo_name}/x86_64/{repo_name}.files.tar.gz", f"{pwd}/../{repo_name}/x86_64/{repo_name}.files")
+    
     print("Completed")
     exit(0)
 
