@@ -4,7 +4,7 @@
 # then please put 'unknown'.
 
 # Maintainer: Your Name <youremail@domain.com>
-pkgname=swws-git
+pkgname=swwws-git
 pkgver=ebc38ef
 pkgrel=1
 pkgdesc="swwws is a slideshow daemon that extends swww with automated wallpaper cycling and multi-monitor support. It combines swww's smooth transitions with slideshow functionality."
