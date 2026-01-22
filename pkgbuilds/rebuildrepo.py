@@ -8,6 +8,12 @@ from pathlib import Path
 
 repo_cfg = {}
 
+def info(msg):
+    print(f"[INFO] {msg}")
+
+def error(msg):
+    print(f"[ERROR] {msg}")
+
 def main():
     global repo_cfg
     argv = sys.argv
@@ -29,24 +35,26 @@ def main():
 
     pwd = Path(__file__).resolve().parent
 
+    info(f"Starting build for repo: '{repo_name}'")
+
     for package in packages:
         if not os.path.exists(f"{package}/"):
-            print(f"[ERROR] Cant add '{package}', not found")
+            error(f"Cant add '{package}', not found")
             not_found_packages.append(package)
         else:
-            print(f"[INFO] Found package '{package}'")
+            info(f"Found package '{package}'")
 
     for package in not_found_packages:
         packages.remove(package)
 
-    print("[INFO] Removing old repo, creating new repo")
+    info("Removing old repo, creating new repo")
     if os.path.exists(f"{pwd}/../{repo_name}/"):
         shutil.rmtree(f"{pwd}/../{repo_name}/")    
 
     dst_dir = Path(f"{pwd}/../{repo_name}/x86_64")
-    print("[INFO] Done creating new repo")
+    info("Done creating new repo")
 
-    print("[INFO] Copying package files")
+    info("Copying package files")
     pkg_files = []
     for package in packages:
         src_dir = Path(f"{pwd}/{package}/")
@@ -56,10 +64,10 @@ def main():
         for file in src_dir.glob("*.pkg.tar.zst"):
             shutil.copy2(file,dst_dir)
             pkg_files.append(dst_dir / file)
-            print(f"[INFO] Copying {str(file)}")
-    print("[INFO] Done copying package files")
+            info(f"Copying {str(file)}")
+    info("Done copying package files")
 
-    print("[INFO] Building repo")
+    info("Building repo")
     subprocess.run(
         ["repo-add", f"{repo_name}.db.tar.gz", *map(str, pkg_files)],
         cwd=dst_dir,
@@ -71,8 +79,8 @@ def main():
     os.rename(f"{pwd}/../{repo_name}/x86_64/{repo_name}.db.tar.gz", f"{pwd}/../{repo_name}/x86_64/{repo_name}.db")
     os.rename(f"{pwd}/../{repo_name}/x86_64/{repo_name}.files.tar.gz", f"{pwd}/../{repo_name}/x86_64/{repo_name}.files")
 
-    print("[INFO] Done building repo")
-    print("[INFO] All done!")
+    info("Done building repo")
+    info("All done!")
     exit(0)
 
 if __name__ == "__main__":
