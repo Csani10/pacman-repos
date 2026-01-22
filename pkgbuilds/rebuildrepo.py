@@ -27,38 +27,52 @@ def main():
     packages = repo_cfg[repo_name]
     not_found_packages = []
 
-    pwd = os.environ["PWD"]
+    pwd = Path(__file__).resolve().parent
 
     for package in packages:
         if not os.path.exists(f"{package}/"):
-            print(f"Cant add '{package}', not found")
+            print(f"[ERROR] Cant add '{package}', not found")
             not_found_packages.append(package)
+        else:
+            print(f"[INFO] Found package '{package}'")
 
     for package in not_found_packages:
         packages.remove(package)
 
-
+    print("[INFO] Removing old repo, creating new repo")
     if os.path.exists(f"{pwd}/../{repo_name}/"):
         shutil.rmtree(f"{pwd}/../{repo_name}/")    
 
+    dst_dir = Path(f"{pwd}/../{repo_name}/x86_64")
+    print("[INFO] Done creating new repo")
+
+    print("[INFO] Copying package files")
+    pkg_files = []
     for package in packages:
         src_dir = Path(f"{pwd}/{package}/")
-        dst_dir = Path(f"{pwd}/../{repo_name}/x86_64")
 
         dst_dir.mkdir(parents=True, exist_ok=True)
 
         for file in src_dir.glob("*.pkg.tar.zst"):
             shutil.copy2(file,dst_dir)
+            pkg_files.append(dst_dir / file)
+            print(f"[INFO] Copying {str(file)}")
+    print("[INFO] Done copying package files")
 
-    for file in dst_dir.glob("*.pkg.tar.zst"):
-        subprocess.run(["repo-add", f"{repo_name}.db.tar.gz", f"{file}"], cwd=dst_dir)
+    print("[INFO] Building repo")
+    subprocess.run(
+        ["repo-add", f"{repo_name}.db.tar.gz", *map(str, pkg_files)],
+        cwd=dst_dir,
+        check=True
+    )
 
     os.unlink(f"{pwd}/../{repo_name}/x86_64/{repo_name}.db")
     os.unlink(f"{pwd}/../{repo_name}/x86_64/{repo_name}.files")
     os.rename(f"{pwd}/../{repo_name}/x86_64/{repo_name}.db.tar.gz", f"{pwd}/../{repo_name}/x86_64/{repo_name}.db")
     os.rename(f"{pwd}/../{repo_name}/x86_64/{repo_name}.files.tar.gz", f"{pwd}/../{repo_name}/x86_64/{repo_name}.files")
-    
-    print("Completed")
+
+    print("[INFO] Done building repo")
+    print("[INFO] All done!")
     exit(0)
 
 if __name__ == "__main__":
