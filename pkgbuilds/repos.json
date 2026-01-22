@@ -1,6 +1,7 @@
 {
   "amethystos-repo": [
-    "mpvpaper",
+    "mpvpaper-git",
+    "hyprshutdown-git",
     "amethystos-wallpapers"
   ]
 }
