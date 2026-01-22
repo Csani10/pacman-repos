@@ -11,9 +11,9 @@ def error(msg):
 def main():
     info("Making all packages...")
     pwd = Path(__file__).resolve().parent
-
+    
     for entry in pwd.iterdir():
-        if not entry.is_dir(): return
+        if not entry.is_dir(): continue
         info(f"Making '{entry.name}'...")
         retval = subprocess.run(["makepkg", "-f"], cwd=entry)
         if not retval.returncode == 0:
