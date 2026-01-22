@@ -1,0 +1,4 @@
+swwws/
+pkg/
+src/
+*.pkg.tar.zst

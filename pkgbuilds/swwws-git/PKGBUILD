@@ -1,0 +1,36 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=swws-git
+pkgver=ebc38ef
+pkgrel=1
+pkgdesc="swwws is a slideshow daemon that extends swww with automated wallpaper cycling and multi-monitor support. It combines swww's smooth transitions with slideshow functionality."
+arch=("x86_64")
+url="https://github.com/Mjoyufull/swwws"
+license=('GPLv3')
+depends=("swww" "wlroots0.19")
+makedepends=("wayland-protocols" "rust")
+source=("git+https://github.com/Mjoyufull/swwws")
+sha256sums=("SKIP")
+
+pkgver() {
+	cd swwws
+	git describe --long --tags --dirty --always 2>/dev/null | sed 's/^v//;s/-/./g'
+}
+
+build() {
+	cd swwws
+	cargo build --release --locked
+}
+
+package() {
+	cd swwws
+
+	install -Dm755 target/release/swwws-daemon "$pkgdir/usr/bin/swwws-daemon"
+	install -Dm755 target/release/swwws-cli "$pkgdir/usr/bin/swwws-cli"
+
+	install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
