@@ -1,0 +1,36 @@
+# This is an example PKGBUILD file. Use this as a start to creating your own,
+# and remove these comments. For more information, see 'man PKGBUILD'.
+# NOTE: Please fill out the license field for your package! If it is unknown,
+# then please put 'unknown'.
+
+# Maintainer: Your Name <youremail@domain.com>
+pkgname=hyprshutdown-git
+pkgver=0c9cec7
+pkgrel=1
+pkgdesc="A graceful shutdown/logout utility for Hyprland, which prevents apps from crashing / dying unexpectedly."
+arch=("x86_64")
+url="https://github.com/hyprwm/hyprshutdown"
+license=('BSD 3-Clause')
+depends=("wlroots0.19" "hyprtoolkit" "hyprutils" "hyprland")
+makedepends=("make" "cmake" "base-devel" "wayland-protocols" "glaze")
+source=("git+https://github.com/hyprwm/hyprshutdown")
+sha256sums=("SKIP")
+
+pkgver() {
+	cd hyprshutdown
+	git describe --long --tags --dirty --always 2>/dev/null | sed 's/^v//;s/-/./g'
+}
+
+build() {
+	cd hyprshutdown
+	cmake -S . -B build \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr
+
+	cmake --build build
+}
+
+package() {
+	cd hyprshutdown
+	DESTDIR="$pkgdir" cmake --install build
+}

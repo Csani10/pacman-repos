@@ -1,0 +1,4 @@
+hyprshutdown/
+pkg/
+src/
+*.pkg.tar.zst
