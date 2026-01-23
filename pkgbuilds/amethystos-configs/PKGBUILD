@@ -1,0 +1,14 @@
+pkgname=amethystos-configs
+pkgver=1.0
+pkgrel=1
+pkgdesc="Default configs AmethystOS"
+arch=('any')
+license=('custom')
+depends=()
+source=("skel.tar.gz")
+sha256sums=('SKIP')
+
+package() {
+  install -d "$pkgdir/etc/skel"
+  cp -a skel/. "$pkgdir/etc/skel/"
+}
